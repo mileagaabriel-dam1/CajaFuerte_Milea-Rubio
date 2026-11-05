@@ -1,0 +1,16 @@
+# Compilación
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+
+# Ficheros temporales de escritura atómica de CajaFuerte
+.*.tmp
+
+# Protección extra: NUNCA subir contraseñas al repositorio
+# (patrón por prefijo para no ignorar por error LectorContrasena.cs)
+CONTRASENA_*
+**/CONTRASENA_*

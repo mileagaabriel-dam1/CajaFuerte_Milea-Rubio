@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CajaFuerte</RootNamespace>
+    <AssemblyName>CajaFuerte_Milea_Rubio</AssemblyName>
+
+    <!-- Calidad de código: cualquier aviso del compilador o de los analizadores rompe la compilación -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Deterministic>true</Deterministic>
+    <!-- CA1707 (guiones bajos en el nombre del ensamblado): el nombre lo impone el enunciado -->
+    <NoWarn>$(NoWarn);CA1707</NoWarn>
+
+    <!-- Solo librerías estándar de .NET: no hay ningún PackageReference en este proyecto -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Permite que el proyecto de pruebas acceda a los miembros 'internal' -->
+    <InternalsVisibleTo Include="CajaFuerte.Pruebas" />
+  </ItemGroup>
+
+</Project>

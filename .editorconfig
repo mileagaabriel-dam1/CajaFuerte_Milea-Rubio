@@ -1,0 +1,36 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# -----------------------------------------------------------------------------
+# Reglas de seguridad criptográfica: cualquier uso prohibido por el enunciado
+# ROMPE LA COMPILACIÓN (además de la prueba automática que revisa el código).
+# -----------------------------------------------------------------------------
+# DES, 3DES, RC2, SHA-1... (algoritmos débiles)
+dotnet_diagnostic.CA5350.severity = error
+# MD5, DES, RC2 (algoritmos rotos)
+dotnet_diagnostic.CA5351.severity = error
+# Modos de cifrado inseguros (ECB, etc.)
+dotnet_diagnostic.CA5358.severity = error
+# Generador de números aleatorios inseguro (System.Random)
+dotnet_diagnostic.CA5394.severity = error
+# Algoritmo hash débil en la derivación de claves (PBKDF2 con SHA-1)
+dotnet_diagnostic.CA5379.severity = error
+# Número de iteraciones insuficiente en PBKDF2
+dotnet_diagnostic.CA5387.severity = error
+dotnet_diagnostic.CA5388.severity = error
+# Derivación de claves obsoleta (PasswordDeriveBytes)
+dotnet_diagnostic.CA5373.severity = error
+# Vector de inicialización no aleatorio
+dotnet_diagnostic.CA5401.severity = error
+dotnet_diagnostic.CA5402.severity = error
+# Clave criptográfica escrita en el código
+dotnet_diagnostic.CA5390.severity = error

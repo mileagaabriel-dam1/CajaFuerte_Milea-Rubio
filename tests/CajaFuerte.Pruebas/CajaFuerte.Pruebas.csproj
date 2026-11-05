@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Pruebas automáticas SIN dependencias externas (ni xUnit ni NUnit):
+    un pequeño ejecutor propio, para respetar el requisito de usar solo .NET estándar.
+    Ejecutar con "dotnet run" desde la carpeta tests/CajaFuerte.Pruebas (ver README).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>CajaFuerte.Pruebas</RootNamespace>
+    <AssemblyName>CajaFuerte.Pruebas</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CajaFuerte_Milea_Rubio\CajaFuerte_Milea_Rubio.csproj" />
+  </ItemGroup>
+
+</Project>
