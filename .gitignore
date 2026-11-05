@@ -14,3 +14,6 @@ obj/
 # (patrÃ³n por prefijo para no ignorar por error LectorContrasena.cs)
 CONTRASENA_*
 **/CONTRASENA_*
+
+# Configuración local de Visual Studio
+**/Properties/launchSettings.json

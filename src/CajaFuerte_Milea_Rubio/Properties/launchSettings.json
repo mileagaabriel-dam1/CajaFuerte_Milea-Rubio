@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CajaFuerte_Milea_Rubio": {
-      "commandName": "Project",
-      "commandLineArgs": "   cifrar F:\\DAM2\\CAJAFUERTE\\CajaFuerte_Milea_Rubio\\entrega\\prueba.txt F:\\DAM2\\CAJAFUERTE\\CajaFuerte_Milea_Rubio\\entrega\\prueba.caja"
-    }
-  }
-}
