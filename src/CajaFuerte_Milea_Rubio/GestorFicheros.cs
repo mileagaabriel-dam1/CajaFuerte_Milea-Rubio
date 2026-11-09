@@ -1,15 +1,3 @@
-// =============================================================================
-//  GestorFicheros.cs — Lectura y escritura segura de ficheros
-//
-//  * Lectura con límite de tamaño (comprobado sobre el propio stream abierto,
-//    no con una consulta previa que podría quedar desfasada).
-//  * Escritura ATÓMICA: se escribe en un fichero temporal del mismo directorio
-//    y solo al terminar se renombra al nombre final. Si algo falla a mitad,
-//    nunca queda un fichero de salida a medias.
-//  * No se sobrescribe un fichero existente salvo que se pida (--forzar).
-//  * En Linux/macOS, el fichero se crea con permisos 600 (solo el propietario).
-// =============================================================================
-
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -18,7 +6,7 @@ namespace CajaFuerte;
 
 internal static class GestorFicheros
 {
-    /// <summary>Lee el fichero completo, rechazándolo si supera <paramref name="tamanoMaximo"/>.</summary>
+    /// Lee el fichero completo, rechazándolo si supera <paramref name="tamanoMaximo"/>.</summary>
     public static byte[] LeerCompleto(string ruta, long tamanoMaximo)
     {
         using var stream = new FileStream(ruta, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -34,9 +22,7 @@ internal static class GestorFicheros
         return datos;
     }
 
-    /// <summary>
     /// Escribe <paramref name="datos"/> en <paramref name="rutaDestino"/> de forma atómica.
-    /// </summary>
     public static void EscribirAtomico(string rutaDestino, ReadOnlySpan<byte> datos, bool sobrescribir)
     {
         string rutaCompleta = Path.GetFullPath(rutaDestino);

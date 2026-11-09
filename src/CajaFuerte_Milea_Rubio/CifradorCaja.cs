@@ -1,24 +1,3 @@
-// =============================================================================
-//  CifradorCaja.cs — Núcleo criptográfico: AES-256-GCM + PBKDF2-HMAC-SHA256
-//
-//  Esta clase trabaja solo con bytes en memoria; no sabe nada de ficheros ni
-//  de la consola. Así se puede probar de forma aislada (ver proyecto de pruebas).
-//
-//  Decisiones de seguridad (resumen para la auditoría):
-//   * Cifrado autenticado AES-256-GCM (System.Security.Cryptography.AesGcm).
-//     Proporciona confidencialidad E integridad en una sola primitiva.
-//   * Clave derivada con PBKDF2-HMAC-SHA256, 600.000 iteraciones (OWASP).
-//   * Sal (32 B) y nonce (12 B) nuevos en CADA cifrado, generados con
-//     RandomNumberGenerator (CSPRNG del sistema operativo). Nunca System.Random,
-//     nunca constantes, nunca derivados de la contraseña.
-//   * La cabecera completa (firma, versión, iteraciones, sal y nonce) se pasa
-//     como "datos asociados" (AAD): se autentica aunque no se cifre.
-//   * Al descifrar, AesGcm comprueba la etiqueta ANTES de devolver ningún dato.
-//     Si no coincide, lanza una excepción y aquí se convierte en
-//     IntegridadException: nunca se devuelve texto plano sin verificar.
-//   * La clave derivada vive en la pila (stackalloc) y se borra con
-//     CryptographicOperations.ZeroMemory en un bloque finally.
-// =============================================================================
 
 using System;
 using System.Buffers.Binary;
@@ -26,15 +5,11 @@ using System.Security.Cryptography;
 
 namespace CajaFuerte;
 
-/// <summary>
 /// Cifra y descifra datos con el formato .caja v1 (AES-256-GCM, clave derivada con PBKDF2).
-/// </summary>
 internal static class CifradorCaja
 {
-    /// <summary>
     /// Cifra <paramref name="textoPlano"/> con una clave derivada de <paramref name="contrasena"/>.
-    /// </summary>
-    /// <returns>El contenido completo del fichero .caja (cabecera + texto cifrado).</returns>
+    /// El contenido completo del fichero .caja (cabecera + texto cifrado).</returns>
     public static byte[] Cifrar(ReadOnlySpan<byte> textoPlano, ReadOnlySpan<char> contrasena)
     {
         ComprobarPlataforma();
@@ -83,11 +58,8 @@ internal static class CifradorCaja
         return resultado;
     }
 
-    /// <summary>
     /// Verifica y descifra el contenido de un fichero .caja.
-    /// </summary>
-    /// <exception cref="FormatoNoValidoException">La estructura del fichero no es válida.</exception>
-    /// <exception cref="IntegridadException">Contraseña incorrecta o fichero manipulado.</exception>
+
     public static byte[] Descifrar(ReadOnlySpan<byte> fichero, ReadOnlySpan<char> contrasena)
     {
         ComprobarPlataforma();
@@ -156,9 +128,7 @@ internal static class CifradorCaja
         return textoPlano;
     }
 
-    /// <summary>
     /// PBKDF2-HMAC-SHA256. La contraseña se codifica internamente en UTF-8.
-    /// </summary>
     private static void DerivarClave(ReadOnlySpan<char> contrasena, ReadOnlySpan<byte> sal, int iteraciones, Span<byte> destino)
     {
         Rfc2898DeriveBytes.Pbkdf2(contrasena, sal, destino, iteraciones, HashAlgorithmName.SHA256);

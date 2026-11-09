@@ -1,75 +1,10 @@
-// =============================================================================
-//  CajaFuerte_Milea_Rubio
-//  Cifrado y descifrado de ficheros con contraseña: AES-256-GCM + PBKDF2-SHA256
-//  Solo librerías estándar de .NET (System.Security.Cryptography).
-// =============================================================================
-//
-//  USO
-//  ---
-//    CajaFuerte cifrar    <fichero_entrada.txt>  <fichero_salida.caja>  [contraseña] [--forzar]
-//    CajaFuerte descifrar <fichero_salida.caja>  <fichero_recuperado>   [contraseña] [--forzar]
-//
-//    Si se omite [contraseña], se pide por teclado sin mostrarla (RECOMENDADO:
-//    así no queda en el historial de la shell ni en la lista de procesos).
-//    --forzar permite sobrescribir el fichero de salida si ya existe.
-//
-// =============================================================================
-//  FORMATO DEL FICHERO .caja  (versión 1)
-// =============================================================================
-//
-//  Todos los bloques tienen LONGITUD FIJA salvo el último (texto cifrado),
-//  que ocupa desde el byte 69 hasta el final del fichero. Los enteros van en
-//  big-endian (byte más significativo primero).
-//
-//   Offset (dec) Offset (hex)  Tamaño   Campo
-//   ------------ ------------  -------  ------------------------------------------
-//        0 –  3   0x00–0x03      4 B    Firma: ASCII "CAJA" = 43 41 4A 41
-//        4        0x04           1 B    Versión del formato = 01
-//        5 –  8   0x05–0x08      4 B    Iteraciones PBKDF2, uint32 big-endian
-//                                       (600.000 = 00 09 27 C0)
-//    ┌   9 – 40   0x09–0x28     32 B    [1] SAL de la derivación de clave (PBKDF2)
-//    │  41 – 52   0x29–0x34     12 B    [2] NONCE (IV) de AES-GCM
-//    │  53 – 68   0x35–0x44     16 B    [3] TAG de autenticación de AES-GCM
-//    └  69 – fin  0x45–fin       N B    [4] TEXTO CIFRADO (N = tamaño del original)
-//
-//   Tamaño total del fichero = 69 + N bytes.
-//
-//  Los bloques [1]–[4] exigidos por el enunciado aparecen en el orden pedido
-//  (sal, nonce, tag, texto cifrado). Delante va una cabecera de 9 bytes
-//  (firma + versión + iteraciones) que es práctica profesional habitual:
-//    - la firma permite reconocer el tipo de fichero y rechazar basura;
-//    - la versión permite evolucionar el formato sin romper ficheros antiguos;
-//    - guardar las iteraciones permite subirlas en el futuro (OWASP las revisa
-//      periódicamente) y seguir abriendo los ficheros ya existentes.
-//
-//  INTEGRIDAD: los bytes 0–52 (cabecera + sal + nonce) se pasan a AES-GCM como
-//  "datos asociados" (AAD). El TAG autentica, por tanto, la cabecera completa
-//  y el texto cifrado: cambiar CUALQUIER byte del fichero hace que el
-//  descifrado falle y el programa lo rechace sin escribir nada.
-//
-//  EJEMPLO REAL: entrega/mensaje_secreto.caja (431 bytes = 69 + 362), por campos:
-//
-//   0x00  Firma        43 41 4A 41                                       "CAJA"
-//   0x04  Versión      01
-//   0x05  Iteraciones  00 09 27 C0                                       = 600.000
-//   0x09  Sal          97 02 65 DE 11 97 00 2E 56 AF 0C 22 95 8F 3B 01
-//                      24 81 65 D5 EB 00 6E 7E 07 EA F6 9D D2 06 BE 3F
-//   0x29  Nonce        31 38 88 F6 B6 47 98 95 66 9C 81 35
-//   0x35  Tag          10 02 3A B0 C1 5B EA 0E 7E 2B 81 71 A0 7B E8 FC
-//   0x45  Cifrado      00 56 4D 69 FD BD CC 03 38 21 A9 ...              (362 bytes)
-//
-//  Cada vez que se cifra, la sal, el nonce, el tag y el cifrado cambian
-//  aunque el texto y la contraseña sean los mismos.
-//
-// =============================================================================
-
 using System;
 using System.IO;
 using System.Security.Cryptography;
 
 namespace CajaFuerte;
 
-/// <summary>Códigos de salida del proceso (útiles para scripts).</summary>
+/// Códigos de salida del proceso (útiles para scripts).</summary>
 internal enum CodigoSalida
 {
     Exito = 0,
@@ -84,7 +19,7 @@ internal enum CodigoSalida
 
 internal static class Program
 {
-    /// <summary>Longitud mínima de contraseña exigida al cifrar.</summary>
+    /// Longitud mínima de contraseña exigida al cifrar.</summary>
     private const int LongitudMinimaContrasena = 12;
 
     private const string OpcionForzar = "--forzar";

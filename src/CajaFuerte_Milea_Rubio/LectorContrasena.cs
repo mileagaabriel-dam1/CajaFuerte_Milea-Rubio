@@ -1,15 +1,3 @@
-// =============================================================================
-//  LectorContrasena.cs — Lectura de la contraseña sin mostrarla en pantalla
-//
-//  Pasar la contraseña como argumento (forma del enunciado) funciona, pero la
-//  deja en el historial de la shell y visible en la lista de procesos. Por eso,
-//  si se omite el argumento, el programa la pide de forma interactiva:
-//    * no se muestra ningún carácter (ni siquiera asteriscos, que revelarían
-//      la longitud);
-//    * se guarda en un char[] que se borra en cuanto deja de necesitarse
-//      (un string de .NET es inmutable y no se puede borrar).
-// =============================================================================
-
 using System;
 using System.Security.Cryptography;
 
@@ -17,13 +5,11 @@ namespace CajaFuerte;
 
 internal static class LectorContrasena
 {
-    /// <summary>Longitud máxima admitida, para evitar entradas absurdamente grandes.</summary>
+    /// Longitud máxima admitida, para evitar entradas absurdamente grandes.</summary>
     public const int LongitudMaxima = 1024;
 
-    /// <summary>
     /// Pide una contraseña por consola sin eco. El llamador es responsable de
     /// borrar el array devuelto con <see cref="Borrar"/>.
-    /// </summary>
     public static char[] Leer(string mensaje)
     {
         Console.Error.Write(mensaje);
@@ -81,7 +67,7 @@ internal static class LectorContrasena
         }
     }
 
-    /// <summary>Compara dos contraseñas en tiempo constante.</summary>
+    /// Compara dos contraseñas en tiempo constante.</summary>
     public static bool SonIguales(ReadOnlySpan<char> a, ReadOnlySpan<char> b)
     {
         return CryptographicOperations.FixedTimeEquals(
@@ -89,7 +75,7 @@ internal static class LectorContrasena
             System.Runtime.InteropServices.MemoryMarshal.AsBytes(b));
     }
 
-    /// <summary>Sobrescribe con ceros el contenido de la contraseña.</summary>
+    /// Sobrescribe con ceros el contenido de la contraseña.</summary>
     public static void Borrar(char[]? contrasena)
     {
         if (contrasena is not null)
